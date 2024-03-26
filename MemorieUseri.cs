@@ -33,18 +33,30 @@ namespace Lab2_re
 
             }
 
-            public User[] GetUseri()
+        
+        public User GetUserNume(string nume, string prenume)
+        {
+            User userNou = new User();
+            for (int i = 0; i < NrUseri; i++)
             {
-                return useri;
+                if (useri[i].Nume == nume && useri[i].Prenume == prenume)
+                {
+                    return useri[i];
+                    break;
+                }
             }
+            return null;
+        }
+
+        public User[] GetUseri(out int nrUseri)
+        {
+            nrUseri = this.NrUseri;
+            return useri;
+        }
 
 
-       
-            public string Info(User user)
-            {
-                string Info = $"Nume utilizator:{user.Nume} Prenume:{user.Prenume}";
-                return Info;
-            }
+
+  
         
 
 

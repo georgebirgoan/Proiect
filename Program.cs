@@ -19,11 +19,13 @@ namespace Lab2_re
             Console.WriteLine("V.Verificare user");
             Console.WriteLine("D.Depunere nmerar");
             Console.WriteLine("R.Retragere nmerar");
+            Console.WriteLine("P.Cautare utilizator dupa nume");
             Console.WriteLine("T.Afisare useri memorie");
             Console.WriteLine("S.Interogarare sold");
             Console.WriteLine("4.Iesire");
             Console.WriteLine("\n");
 
+            int nrUseri = 0;
 
             User user = new User();
             MemorieUseri adminUseri = new MemorieUseri();
@@ -60,9 +62,28 @@ namespace Lab2_re
                         break;
 
                     case "T":
-                        User[] utilizatori = adminUseri.GetUseri();
-                        AfisareUseriMemorie(utilizatori);
+                        User[] utilizatori = adminUseri.GetUseri(out nrUseri);
+                        AfisareUseriMemorie(utilizatori,nrUseri);
                         break;
+
+                    case "N":
+                        Console.WriteLine("Introdu nume user:");
+                        string cNume = Console.ReadLine();
+                        Console.WriteLine("Introdu prenume user:");
+                        string cPrenume = Console.ReadLine();
+
+                        User cautareUser = adminUseri.GetUserNume(cNume, cPrenume);
+                        if(cautareUser != null)
+                        {
+                            Console.WriteLine("Utilizatorul a fost gasit!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Utilizator negasit!");
+                        }
+                        break;
+
+
                     case "S":
                         AfisareSoldUser(user);
                         break;
@@ -161,15 +182,28 @@ namespace Lab2_re
 
 
 
-        public static void AfisareUseriMemorie(User[] utilizatori)
+        public static void AfisareUseriMemorie(User[] user,int nrUseri)
         {
-            Console.WriteLine("\n Useri din memorie:");
+            Console.WriteLine("\n Useri din memorie cu nume si prenunme");
 
-            for (int i = 0; i < utilizatori.Length; i++)
+            for (int i = 0; i < nrUseri; i++)
             {
-                Console.WriteLine(utilizatori[i].Info());
+                if (user[i] != null)
+                {
+                    string Info = user[i].Info();
+                    Console.WriteLine($"{Info}");
+                }
+                else
+                {
+                    Console.WriteLine("Utilizator null");
+                }
             }
         }
+
+      
+
+
+
 
 
     }
