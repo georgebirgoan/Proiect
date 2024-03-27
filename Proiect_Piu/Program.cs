@@ -49,7 +49,7 @@ namespace Proiect_Piu
 
             //apelare pt id unic
             //daca fisierul este gol->eroare
-               adminUseriFisier.GetUseriFisier(out nrUseri);
+              adminUseriFisier.GetUseriFisier(out nrUseri);
             
 
             string optiune;
