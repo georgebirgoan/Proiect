@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using Clase;
 using NivelStocareDate;
 
+//istoric tranzactii bancomat si stocare in memorie toate tranzactiile
+//sortare dupa litera alfabet
+
 
 namespace Proiect_Piu
 {
@@ -30,13 +33,19 @@ namespace Proiect_Piu
             Console.WriteLine("SF.Salvare user fisier");
             Console.WriteLine("AF.Afisare useri fisier");
             Console.WriteLine("O.Ordonare useri alfabetic");
+            Console.WriteLine("NC.Numere Card");
+            Console.WriteLine("TR.Istoric Tranzactii");
             Console.WriteLine("I. Info despre card");
             Console.WriteLine("4.Iesire");
             Console.WriteLine("\n");
 
             int nrUseri = 0;
+            int NrNumere = 0;
             double suma = 0.0;
             int IdUser = 0;
+            double depozit = 0;
+            double retragere = 0;
+            int nrTranzactii = 0;
 
 
             string numeFisier = ConfigurationManager.AppSettings["NumeFisier"];
@@ -45,7 +54,7 @@ namespace Proiect_Piu
 
             Bancomat bancomat = new Bancomat();
             User    user= new User();
-             MemorieUseri adminUseri = new MemorieUseri();
+            MemorieUseri memorie = new MemorieUseri();
 
             //apelare pt id unic
             //daca fisierul este gol->eroare
@@ -64,7 +73,8 @@ namespace Proiect_Piu
                 {
                     case "C":
                         user= CitireTastatura();
-                        adminUseri.AddUser(user);
+
+                        memorie.AddUser(user);
                         break;
 
                     case "A":
@@ -74,29 +84,52 @@ namespace Proiect_Piu
                     case "V":
                         optiune = VerificareUser(user);
                         break;
+
                     case "D":
-                        DepunereNumerar(user, bancomat);
+                        ++nrTranzactii;
+                        //bancomat.IstoricTranz = nrTranz;
+
+                        depozit=DepunereNumerar(user, bancomat,depozit);
+                        //Console.WriteLine($"Tranzactia:{nrTranz},depunere suma:{depozit}");
+
+
+                        Bancomat tranz = new Bancomat("DEPUNERE", depozit, DateTime.Now);
+                        memorie.AddIstoricTranz(tranz);
+
                         break;
 
                     case "R":
-                        RetragereNumerar(user,bancomat);
+                        ++nrTranzactii;
+                        //bancomat.IstoricTranz = nrTranz;
+
+                        retragere=RetragereNumerar(user,bancomat);
+
+                        //Console.WriteLine($"Tranzactia:{nrTranz},retragere suma:{user.Balance}");
+
+                        Bancomat tranz2 = new Bancomat("RETRAGERE", retragere, DateTime.Now);
+                        memorie.AddIstoricTranz(tranz2);
+
                         break;
 
                     case "AF":
                         User[] utilizatori = adminUseriFisier.GetUseriFisier(out nrUseri);
                         Console.WriteLine("Afisare useri fisier:");
                         AfisareUseriFisier(utilizatori, nrUseri);
-
                         break;
 
                     case "CN":
-                        CautareNume(adminUseri);
+                        Console.WriteLine("Introdu nume user:");
+                        string cNume = Console.ReadLine();
+                        Console.WriteLine("Introdu prenume user:");
+                        string cPrenume = Console.ReadLine();
+                        memorie.GetUserNume(cNume, cPrenume);
                         break;
 
                     case "AL":
                         Console.WriteLine("Introduceti suma pt alimentare bancomat:");
                         suma = double.Parse(Console.ReadLine());
                         bancomat.Balance = suma;
+                        
                         break;
 
                     case "SU":
@@ -116,23 +149,27 @@ namespace Proiect_Piu
                         user.IdUser = idUser;
                         //adaugare student in fisier
                         adminUseriFisier.AddUser(user);
+
                         break;
                     case "O":
                         User[] useri = adminUseriFisier.GetUseriFisier(out nrUseri);
                         SortareSiAfisareNumePrenume(useri, nrUseri);    
                         break;
 
+                    case "TR":
+                        Bancomat[] tranzactii= memorie.GetIstoricTranz(nrTranzactii);
+                        AfisareTranzactiiBancomat(tranzactii, nrTranzactii);
+                        break;
+                  
+
 
                     case "X":
                         break;
 
                 }
-
-
             } while (optiune != "X");
 
         }
-
 
 
 
@@ -147,6 +184,7 @@ namespace Proiect_Piu
             Console.WriteLine("Cod card");
             int codCard = int.Parse(Console.ReadLine());
 
+            //apelare constructor
             User user = new User(codCard, nume, prenume, 0);
             return user;
         }
@@ -157,20 +195,40 @@ namespace Proiect_Piu
             Console.WriteLine(user.Info());
         }
 
+        public static void AfisareTranzactiiBancomat(Bancomat[] tranzactii, int nrTranzactii)
+        {
+            Console.WriteLine(nrTranzactii);
+            Console.WriteLine("\nTranzactii din bancomat:");
+            for (int i = 0; i < nrTranzactii; i++)
+            {
+                if (tranzactii[i] != null)
+                {
+                    string infoTranzactie = tranzactii[i].InfoTranzactii();
+                    Console.WriteLine(infoTranzactie);
+                }
+                else
+                {
+                    Console.WriteLine("Tranzactie nula");
+                }
+            }
+        }
 
-        public static void DepunereNumerar(User user, Bancomat bancomat)
+        public static double DepunereNumerar(User user, Bancomat bancomat,double depozit)
         {
             Console.WriteLine('\n');
             Console.WriteLine("Care este suma dorita petru depunere?");
 
-            double depozit = Double.Parse(Console.ReadLine());
+            depozit = Double.Parse(Console.ReadLine());
             user.Balance = depozit;
             bancomat.SoldDepunere(depozit);
             Console.WriteLine($"\n Suma depusa este:{depozit} lei");
+
+
             Console.WriteLine('\n');
+            return depozit;
         }
 
-        public static void RetragereNumerar(User user,Bancomat bancomat)
+        public static double RetragereNumerar(User user,Bancomat bancomat)
         {
             Console.WriteLine("Care este suma pt retragere:");
             double retragere = double.Parse(Console.ReadLine());
@@ -183,7 +241,9 @@ namespace Proiect_Piu
             {
                 user.Balance = user.SoldCurentUser(retragere);
                 bancomat.SoldRetragere(retragere);
+                return retragere;
             }
+            return 0;
         }
 
         public static string VerificareUser(User user)
@@ -212,23 +272,6 @@ namespace Proiect_Piu
             Console.WriteLine($"Sold dv: {user.Balance}");
         }
 
-        public static void CautareNume(MemorieUseri adminUseri)
-        {
-            Console.WriteLine("Introdu nume user:");
-            string cNume = Console.ReadLine();
-            Console.WriteLine("Introdu prenume user:");
-            string cPrenume = Console.ReadLine();
-
-            User cautareUser = adminUseri.GetUserNume(cNume, cPrenume);
-            if (cautareUser != null)
-            { 
-                Console.WriteLine("Utilizatorul a fost gasit cu succes!");
-            }
-            else
-            { 
-                Console.WriteLine("Utilizator negasit!");
-            }
-        }
 
         public static void AfisareUseriFisier(User[] user, int nrUseri)
         {
@@ -247,8 +290,6 @@ namespace Proiect_Piu
                 }
             }
         }
-
-
 
 
         public static void SortareSiAfisareNumePrenume(User[] useri, int nrUseri)
@@ -276,13 +317,6 @@ namespace Proiect_Piu
                 }
             }
         }
-
-
-
-
-
-
-
 
 
 
