@@ -17,7 +17,7 @@ namespace Proiect_Piu
     {
         static void Main()
         {
-
+            
 
             Console.WriteLine('\n');
             Console.WriteLine("Alegeti operatiunea dorita..");
@@ -68,99 +68,100 @@ namespace Proiect_Piu
                 Console.WriteLine("\n");
                 Console.WriteLine("Alegeti o optiune");
                 optiune = Console.ReadLine();
-
+          
                 switch (optiune.ToUpper())
                 {
-                    case "C":
-                        user= CitireTastatura();
+                    
+                            case "C":
+                                user= CitireTastatura();
+                                Console.WriteLine($"Afisare pin user:{user.Pin}");
+                              
+                                memorie.AddUser(user);
+                                break;
+                            case "V":
+                                optiune= VerificareUser(user);
+                                break;
+                            case "A":
 
-                        memorie.AddUser(user);
+                                AfisareUserCurent(user);
+                                break;
+
+                            case "D":
+                                ++nrTranzactii;
+                                //bancomat.IstoricTranz = nrTranz;
+
+                                depozit = DepunereNumerar(user, bancomat, depozit);
+                                //Console.WriteLine($"Tranzactia:{nrTranz},depunere suma:{depozit}");
+
+
+                                Bancomat tranz = new Bancomat("DEPUNERE", depozit, DateTime.Now);
+                                memorie.AddIstoricTranz(tranz);
+                                break;
+
+                            case "R":
+                                ++nrTranzactii;
+                                //bancomat.IstoricTranz = nrTranz;
+
+                                retragere = RetragereNumerar(user, bancomat);
+
+                                //Console.WriteLine($"Tranzactia:{nrTranz},retragere suma:{user.Balance}");
+
+                                Bancomat tranz2 = new Bancomat("RETRAGERE", retragere, DateTime.Now);
+                                memorie.AddIstoricTranz(tranz2);
+
+                                break;
+
+                            case "AF":
+                                User[] utilizatori = adminUseriFisier.GetUseriFisier(out nrUseri);
+                                Console.WriteLine("Afisare useri fisier:");
+                                AfisareUseriFisier(utilizatori, nrUseri);
+                                break;
+
+                            case "CN":
+                                Console.WriteLine("Introdu nume user:");
+                                string cNume = Console.ReadLine();
+                                Console.WriteLine("Introdu prenume user:");
+                                string cPrenume = Console.ReadLine();
+                                memorie.GetUserNume(cNume, cPrenume);
+                                break;
+
+                            case "AL":
+                                Console.WriteLine("Introduceti suma pt alimentare bancomat:");
+                                suma = double.Parse(Console.ReadLine());
+                                bancomat.Balance = suma;
+
+                                break;
+
+                            case "SU":
+                                AfisareSoldUser(user);
+                                break;
+
+                            case "SB":
+                                Console.WriteLine(bancomat.SoldBancomat());
+                                break;
+
+                            case "I":
+                                user.Info();
+                                break;
+
+                            case "SF":
+                                int idUser = ++nrUseri;
+                                user.IdUser = idUser;
+                                //adaugare student in fisier
+                                adminUseriFisier.AddUser(user);
+                                Console.WriteLine("Useri salvati cu succes in fisier!");
+
                         break;
+                            
+                            case "O":
+                                User[] useri = adminUseriFisier.GetUseriFisier(out nrUseri);
+                                SortareSiAfisareNumePrenume(useri, nrUseri);
+                                break;
 
-                    case "A":
-                        AfisareUserCurent(user);
-                        break;
-
-                    case "V":
-                        optiune = VerificareUser(user);
-                        break;
-
-                    case "D":
-                        ++nrTranzactii;
-                        //bancomat.IstoricTranz = nrTranz;
-
-                        depozit=DepunereNumerar(user, bancomat,depozit);
-                        //Console.WriteLine($"Tranzactia:{nrTranz},depunere suma:{depozit}");
-
-
-                        Bancomat tranz = new Bancomat("DEPUNERE", depozit, DateTime.Now);
-                        memorie.AddIstoricTranz(tranz);
-
-                        break;
-
-                    case "R":
-                        ++nrTranzactii;
-                        //bancomat.IstoricTranz = nrTranz;
-
-                        retragere=RetragereNumerar(user,bancomat);
-
-                        //Console.WriteLine($"Tranzactia:{nrTranz},retragere suma:{user.Balance}");
-
-                        Bancomat tranz2 = new Bancomat("RETRAGERE", retragere, DateTime.Now);
-                        memorie.AddIstoricTranz(tranz2);
-
-                        break;
-
-                    case "AF":
-                        User[] utilizatori = adminUseriFisier.GetUseriFisier(out nrUseri);
-                        Console.WriteLine("Afisare useri fisier:");
-                        AfisareUseriFisier(utilizatori, nrUseri);
-                        break;
-
-                    case "CN":
-                        Console.WriteLine("Introdu nume user:");
-                        string cNume = Console.ReadLine();
-                        Console.WriteLine("Introdu prenume user:");
-                        string cPrenume = Console.ReadLine();
-                        memorie.GetUserNume(cNume, cPrenume);
-                        break;
-
-                    case "AL":
-                        Console.WriteLine("Introduceti suma pt alimentare bancomat:");
-                        suma = double.Parse(Console.ReadLine());
-                        bancomat.Balance = suma;
-                        
-                        break;
-
-                    case "SU":
-                        AfisareSoldUser(user);
-                        break;
-
-                    case "SB":
-                        Console.WriteLine(bancomat.SoldBancomat());
-                        break;
-
-                    case "I":
-                        user.Info();
-                        break;
-
-                    case "SF":
-                        int idUser = ++nrUseri;
-                        user.IdUser = idUser;
-                        //adaugare student in fisier
-                        adminUseriFisier.AddUser(user);
-
-                        break;
-                    case "O":
-                        User[] useri = adminUseriFisier.GetUseriFisier(out nrUseri);
-                        SortareSiAfisareNumePrenume(useri, nrUseri);    
-                        break;
-
-                    case "TR":
-                        Bancomat[] tranzactii= memorie.GetIstoricTranz(nrTranzactii);
-                        AfisareTranzactiiBancomat(tranzactii, nrTranzactii);
-                        break;
-                  
+                            case "TR":
+                                Bancomat[] tranzactii = memorie.GetIstoricTranz(nrTranzactii);
+                                AfisareTranzactiiBancomat(tranzactii, nrTranzactii);
+                                break;
 
 
                     case "X":
@@ -175,6 +176,8 @@ namespace Proiect_Piu
 
         public static User CitireTastatura()
         {
+            bool schimbarePin = false;
+
             Console.WriteLine("Numele utilizator card");
             string nume = Console.ReadLine();
 
@@ -184,10 +187,96 @@ namespace Proiect_Piu
             Console.WriteLine("Cod card");
             int codCard = int.Parse(Console.ReadLine());
 
-            //apelare constructor
-            User user = new User(codCard, nume, prenume, 0);
-            return user;
+            Console.WriteLine("Introduceti optiunile bancomatului (1 pentru RetragereNumerar, 2 pentru DepunereNumerar, etc.):");
+            int optiune = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Introduceti starea bancomatului (0 pentru Activ, 1 pentru Inactiv, 2 pentru Blocat):");
+            int optiuneStare = int.Parse(Console.ReadLine());
+            StareBancomat stare = (StareBancomat)optiuneStare;
+
+            // Convertim valoarea int la enum OptiuniBancomat
+            OptiuniBancomat optiuniBancomat = (OptiuniBancomat)optiune;
+
+            switch (optiuniBancomat)
+            {
+                case OptiuniBancomat.RetragereNumerar:
+                    if (stare == StareBancomat.Activ)
+                    {
+                        Console.WriteLine("Pueti efectua operatiunea de retragere numerar.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bancomatul nu este disponibil pentru retragere de numerar în acest moment.");
+                    }
+                    break;
+                case OptiuniBancomat.DepunereNumerar:
+                    if (stare == StareBancomat.Activ)
+                    {
+                        Console.WriteLine("Pueti efectua operatiunea de depunere numerar.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bancomatul nu este disponibil pentru depunere de numerar în acest moment.");
+                    }
+                    break;
+                case OptiuniBancomat.InterogareSold:
+                    if (stare == StareBancomat.Activ)
+                    {
+                        Console.WriteLine("Pueti efectua operatiunea de interogare sold.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bancomatul nu este disponibil pentru interogare de sold în acest moment.");
+                    }
+                    break;
+                case OptiuniBancomat.TransferFonduri:
+                    if (stare == StareBancomat.Activ)
+                    {
+                        Console.WriteLine("Transferul de fonduri nu este disponibil în prezent pt cardul dv.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bancomatul nu este disponibil pentru transfer de fonduri în acest moment.");
+                    }
+                    break;
+                case OptiuniBancomat.PlataFactura:
+                    if (stare == StareBancomat.Activ)
+                    {
+                        Console.WriteLine("Plata facturilor nu este disponibilă în prezent pt cardul dv.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bancomatul nu este disponibil pentru plată de facturi în acest moment.");
+                    }
+                    break;
+                case OptiuniBancomat.SchimbarePin:
+                    if (stare == StareBancomat.Activ)
+                    {
+                        Console.WriteLine("Ati selectat schimbarea codului PIN.");
+                        schimbarePin = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bancomatul nu este disponibil pentru schimbare de PIN în acest moment.");
+                    }
+                    break;
+                default:
+                    Console.WriteLine("Opțiune invalidă.");
+                    break;
+            }
+
+            if (schimbarePin)
+            {
+                Console.WriteLine("Introduceti noul cod PIN:");
+                int newPin = Convert.ToInt32(Console.ReadLine());
+                return new User(newPin, nume, prenume, 0, optiuniBancomat,codCard);
+            }
+            else
+            {
+                return new User(codCard, nume, prenume, 0, optiuniBancomat, codCard);
+            }
         }
+
 
 
         public static void AfisareUserCurent(User user)
@@ -246,26 +335,24 @@ namespace Proiect_Piu
             return 0;
         }
 
-        public static string VerificareUser(User user)
+        public static string VerificareUser(User useri)
         {
-            Console.WriteLine("Introdu pin pt cardul Dv:");
+            Console.WriteLine("Introduceti PIN-ul pentru cardul Dvs.:");
             double codCard = double.Parse(Console.ReadLine());
             string optiune = string.Empty;
-
-            if (user.Pin == codCard)
-            {
-                Console.WriteLine("Pin corect.Puteti efectua operatiuni!");
-                Console.WriteLine("Introdu opt dorita:");
-            }
-            else
-            {
-                Console.WriteLine("Pin incorect.Incearca din nou");
-                Console.WriteLine("Introdu din nou o optiune:");
-
-            }
+            if (useri.Pin == codCard)
+                    {
+                        Console.WriteLine("PIN corect. Puteti efectua operatiuni!");
+                        Console.WriteLine("Introdu optiunea dorita");
+                    }
+                    else
+                    {
+                        Console.WriteLine("PIN incorect. Va rugam incercati din nou.");
+                        Console.WriteLine("Introdu din nou o optiune");
+                    }
             return optiune;
 
-        }
+                }
 
         public static void AfisareSoldUser(User user)
         {
@@ -275,7 +362,7 @@ namespace Proiect_Piu
 
         public static void AfisareUseriFisier(User[] user, int nrUseri)
         {
-            Console.WriteLine("\n Useri din fisier cu nume si prenunme");
+            Console.WriteLine("\n Useri din fisier cu nume,prenunme,cod card");
 
             for (int i = 0; i < nrUseri; i++)
             {
