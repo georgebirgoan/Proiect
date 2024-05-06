@@ -187,7 +187,7 @@ namespace Proiect_Piu
             Console.WriteLine("Cod card");
             int codCard = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Introduceti optiunile bancomatului (1 pentru RetragereNumerar, 2 pentru DepunereNumerar, etc.):");
+            Console.WriteLine("Introduceti optiunilea (1 pentru RetragereNumerar, 2 pentru DepunereNumerar, etc.):");
             int optiune = int.Parse(Console.ReadLine());
 
             Console.WriteLine("Introduceti starea bancomatului (0 pentru Activ, 1 pentru Inactiv, 2 pentru Blocat):");
@@ -269,11 +269,11 @@ namespace Proiect_Piu
             {
                 Console.WriteLine("Introduceti noul cod PIN:");
                 int newPin = Convert.ToInt32(Console.ReadLine());
-                return new User(newPin, nume, prenume, 0, optiuniBancomat,codCard);
+                return new User(newPin,0, optiuniBancomat);
             }
             else
             {
-                return new User(codCard, nume, prenume, 0, optiuniBancomat, codCard);
+                return new User(codCard, 0, optiuniBancomat);
             }
         }
 
